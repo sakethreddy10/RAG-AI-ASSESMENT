@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAG Chat Assistant – TrueAILab</title>
+  <meta name="description" content="A production-grade GenAI chat assistant powered by Gemini + ChromaDB RAG" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Markdown rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">🧠</div>
+        <span class="logo-text">RAG Assistant</span>
+      </div>
+    </div>
+
+    <button class="new-chat-btn" id="newChatBtn" onclick="startNewChat()">
+      <span>+ New Chat</span>
+    </button>
+
+    <div class="sidebar-section">
+      <p class="sidebar-label">HOW IT WORKS</p>
+      <div class="info-cards">
+        <div class="info-card">
+          <span class="info-icon">📄</span>
+          <div>
+            <strong>1. Indexing</strong>
+            <p>Docs → Chunks → Embeddings → ChromaDB</p>
+          </div>
+        </div>
+        <div class="info-card">
+          <span class="info-icon">🔍</span>
+          <div>
+            <strong>2. Retrieval</strong>
+            <p>Query → Embed → Cosine Search → Top-3</p>
+          </div>
+        </div>
+        <div class="info-card">
+          <span class="info-icon">🤖</span>
+          <div>
+            <strong>3. Generation</strong>
+            <p>Context + History → Gemini → Answer</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <p class="sidebar-label">TRY ASKING</p>
+      <div class="suggestion-pills">
+        <button class="pill" onclick="fillSuggestion('How do I reset my password?')">🔑 Reset password</button>
+        <button class="pill" onclick="fillSuggestion('How do I create an account?')">👤 Create account</button>
+        <button class="pill" onclick="fillSuggestion('What are the billing options?')">💳 Billing options</button>
+        <button class="pill" onclick="fillSuggestion('How is my data kept secure?')">🔒 Data privacy</button>
+        <button class="pill" onclick="fillSuggestion('How do I use the mobile app?')">📱 Mobile app</button>
+        <button class="pill" onclick="fillSuggestion('How can I access the API?')">⚙️ API access</button>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="session-badge">
+        <span>Session ID:</span>
+        <code id="sessionDisplay">loading...</code>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===================== MAIN CHAT AREA ===================== -->
+  <main class="chat-main">
+
+    <!-- Header -->
+    <header class="chat-header">
+      <div class="header-left">
+        <button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">☰</button>
+        <div class="header-info">
+          <h1>RAG Chat Assistant</h1>
+          <span class="header-subtitle">Powered by Gemini + ChromaDB</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="status-indicator" id="statusIndicator">
+          <div class="status-dot"></div>
+          <span>Online</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Messages Area -->
+    <div class="messages-container" id="messagesContainer">
+
+      <!-- Welcome Screen (shown when no messages) -->
+      <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-icon">🧠</div>
+        <h2>RAG-Powered Chat Assistant</h2>
+        <p>I answer questions using <strong>Retrieval-Augmented Generation</strong>.</p>
+        <p>I search a knowledge base for relevant information, then use Gemini to generate a grounded answer.</p>
+        <div class="welcome-badges">
+          <span class="badge">Gemini API</span>
+          <span class="badge">ChromaDB</span>
+          <span class="badge">Cosine Similarity</span>
+          <span class="badge">FastAPI</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-area">
+      <div class="input-wrapper">
+        <textarea
+          id="messageInput"
+          placeholder="Ask me anything... (e.g. How do I reset my password?)"
+          rows="1"
+          onkeydown="handleKeyDown(event)"
+          oninput="autoResize(this)"
+        ></textarea>
+        <button
+          id="sendBtn"
+          class="send-btn"
+          onclick="sendMessage()"
+          title="Send message"
+          aria-label="Send message"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+      <p class="input-hint">Press <kbd>Enter</kbd> to send · <kbd>Shift+Enter</kbd> for new line</p>
+    </div>
+
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

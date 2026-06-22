@@ -1,0 +1,37 @@
+# ============================================================
+# .gitignore — Files Git Should NOT Track
+# ============================================================
+
+# Python virtual environment (too large, easily recreated)
+venv/
+.venv/
+env/
+
+# API keys and secrets (NEVER commit these!)
+.env
+
+# ChromaDB vector database (built by ingest.py, not source code)
+db/
+chroma_db/
+
+# Old NumPy vector store file (from the previous version)
+vector_store.json
+
+# Python bytecode cache (auto-generated, not source code)
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE settings
+.vscode/
+.idea/
+*.DS_Store
+
+# Streamlit cache
+.streamlit/
+
+# Test outputs
+*.log
+
+# Scratch scripts
+scratch/

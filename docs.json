@@ -1,0 +1,34 @@
+[
+  {
+    "title": "Reset Password",
+    "content": "Users can reset their password by going to Settings > Security > Reset Password. Enter your registered email address and click 'Send Reset Link'. You will receive an email with a secure link valid for 24 hours. Click the link, enter your new password (minimum 8 characters, must include uppercase, lowercase, and a number), and confirm it. If you do not receive the email, check your spam folder or contact support."
+  },
+  {
+    "title": "Account Creation",
+    "content": "To create a new account, visit our website and click 'Sign Up'. Fill in your full name, email address, and choose a strong password. You will receive a verification email — click the link inside to activate your account. Free accounts include 5GB storage and access to basic features. Premium accounts offer unlimited storage, priority support, and advanced analytics. You can upgrade anytime from your account dashboard."
+  },
+  {
+    "title": "Billing and Payments",
+    "content": "We accept Visa, MasterCard, American Express, and PayPal. Subscriptions are billed monthly or annually — annual plans save you 20%. To update your payment method, go to Settings > Billing > Payment Methods. Invoices are emailed automatically after each billing cycle. If a payment fails, we retry after 3 days and send a notification. You can cancel your subscription anytime; access continues until the end of the billing period. Refunds are available within 7 days of purchase."
+  },
+  {
+    "title": "Data Privacy and Security",
+    "content": "We take data privacy seriously. All data is encrypted at rest using AES-256 and in transit using TLS 1.3. We are GDPR and CCPA compliant. We never sell your personal data to third parties. You can download all your data from Settings > Privacy > Export Data. To delete your account and all associated data, go to Settings > Privacy > Delete Account. Data deletion is permanent and completed within 30 days. We conduct regular third-party security audits."
+  },
+  {
+    "title": "File Upload and Storage",
+    "content": "You can upload files up to 100MB per file on the free plan, and up to 2GB per file on the premium plan. Supported file types include PDF, DOCX, XLSX, PNG, JPG, MP4, and ZIP. To upload, drag and drop files into the dashboard or click the Upload button. Files are automatically organized by date. You can create folders to organize your files. Deleted files go to the Trash and are permanently removed after 30 days. Use the search bar to find files by name, type, or date."
+  },
+  {
+    "title": "API Access and Integration",
+    "content": "Our REST API allows you to integrate our services into your own applications. API keys can be generated from Settings > Developer > API Keys. Each key has configurable rate limits — free tier allows 100 requests per hour, premium tier allows 10,000 requests per hour. Authenticate requests using the Authorization header with a Bearer token. Full API documentation is available at docs.ourplatform.com. We support webhooks for real-time event notifications. SDKs are available for Python, JavaScript, and Go."
+  },
+  {
+    "title": "Team Collaboration Features",
+    "content": "Teams can collaborate in shared workspaces. Create a team from Settings > Teams > Create New Team. Invite members via email — they will receive an invitation link. Assign roles: Admin (full access), Editor (can create and edit), Viewer (read-only). Team members can comment on files, tag each other using @mention, and track changes with version history. Shared drives allow all team members to access common files. Premium teams get advanced audit logs showing who accessed or modified each file."
+  },
+  {
+    "title": "Mobile App Usage",
+    "content": "Our mobile app is available for iOS (iOS 14+) and Android (Android 8+). Download from the App Store or Google Play. Sign in with your existing account credentials. The app supports offline mode — downloaded files are accessible without internet. Enable notifications to get alerts on new shares, comments, and updates. Use biometric login (Face ID or fingerprint) for quick and secure access. The mobile app syncs automatically when connected to the internet. Dark mode is supported and follows your device settings."
+  }
+]
