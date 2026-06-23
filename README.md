@@ -1,3 +1,13 @@
+---
+title: RAG AI Assessment
+emoji: 🧠
+colorFrom: indigo
+colorTo: purple
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # 🧠 Document Q&A Bot — RAG System
 
 A production-grade AI assistant that answers questions about **your own documents** (PDFs and Word files) using **Retrieval-Augmented Generation (RAG)**.
