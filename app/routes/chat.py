@@ -10,7 +10,7 @@
 # 5. Return response
 # ==============================================================================
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile, File
 from app.models.schemas import ChatRequest, ChatResponse
 from app.services.rag_service import RAGService
 from app.utils.memory import conversation_memory
@@ -96,3 +96,55 @@ async def clear_session(session_id: str):
     """
     conversation_memory.clear_session(session_id)
     return {"status": "cleared", "sessionId": session_id}
+
+
+@router.post("/upload")
+async def upload_document(file: UploadFile = File(...)):
+    """
+    Endpoint to dynamically upload and ingest a document.
+    """
+    import tempfile
+    import shutil
+    import os
+
+    filename = file.filename
+    if not filename.lower().endswith((".pdf", ".docx")):
+        raise HTTPException(
+            status_code=400,
+            detail={"error": "Only PDF and DOCX files are supported."}
+        )
+
+    try:
+        # Create a temp file to save the uploaded content
+        suffix = os.path.splitext(filename)[1]
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
+            shutil.copyfileobj(file.file, temp_file)
+            temp_path = temp_file.name
+
+        try:
+            # Index the document chunks
+            chunks_added = rag_service.ingest_file(temp_path, filename)
+            
+            # Save it to the permanent data/ folder so it's persisted for future ingest runs
+            from src.config import DATA_DIR
+            os.makedirs(DATA_DIR, exist_ok=True)
+            perm_path = os.path.join(DATA_DIR, filename)
+            shutil.copy(temp_path, perm_path)
+            
+        finally:
+            # Clean up the temp file
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+
+        return {
+            "status": "success",
+            "message": f"Successfully ingested '{filename}'",
+            "chunks_added": chunks_added
+        }
+
+    except Exception as e:
+        print(f"❌ Upload error: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail={"error": f"Failed to ingest file: {str(e)}"}
+        )

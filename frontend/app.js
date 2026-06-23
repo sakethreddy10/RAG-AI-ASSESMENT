@@ -271,6 +271,106 @@ async function startNewChat() {
 }
 
 // ============================================================
+// File Upload Handling
+// ============================================================
+async function handleFileUpload(event) {
+  const fileInput = event.target;
+  const file = fileInput.files[0];
+  if (!file) return;
+
+  const allowedExtensions = ['.pdf', '.docx'];
+  const fileName = file.name;
+  const extension = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+
+  if (!allowedExtensions.includes(extension)) {
+    showUploadStatus(`Only PDF and DOCX files are allowed.`, 'error');
+    fileInput.value = '';
+    return;
+  }
+
+  const uploadBtnLabel = document.getElementById('uploadBtnLabel');
+  const uploadBtnText = document.getElementById('uploadBtnText');
+  const uploadProgress = document.getElementById('uploadProgress');
+  const progressBarFill = document.getElementById('progressBarFill');
+  const uploadStatus = document.getElementById('uploadStatus');
+
+  // Update UI to uploading state
+  uploadBtnLabel.style.pointerEvents = 'none';
+  uploadBtnText.textContent = 'Ingesting document...';
+  uploadProgress.style.display = 'block';
+  progressBarFill.style.width = '0%';
+  showUploadStatus('Ingesting document into ChromaDB...', 'info');
+
+  // Create FormData
+  const formData = new FormData();
+  formData.append('file', file);
+
+  // Upload using XMLHttpRequest to track progress
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/api/upload', true);
+
+  xhr.upload.onprogress = (e) => {
+    if (e.lengthComputable) {
+      const percentage = Math.round((e.loaded / e.total) * 100);
+      // We reserve up to 80% for upload, and the rest for backend ingestion
+      progressBarFill.style.width = (percentage * 0.8) + '%';
+    }
+  };
+
+  xhr.onload = () => {
+    // Reset button pointer events
+    uploadBtnLabel.style.pointerEvents = '';
+    fileInput.value = ''; // Reset file input
+
+    if (xhr.status >= 200 && xhr.status < 300) {
+      try {
+        const response = JSON.parse(xhr.responseText);
+        progressBarFill.style.width = '100%';
+        showUploadStatus(`Indexed! Added ${response.chunks_added} chunks.`, 'success');
+        
+        // Add a notification in the chat
+        if (welcomeScreen) {
+          welcomeScreen.style.display = 'none';
+        }
+        addMessage('assistant', `✅ **Document Uploaded & Indexed**\n\nI have successfully indexed \`${fileName}\` (${response.chunks_added} chunks) into ChromaDB. You can now ask questions about its content!`, null, null);
+        
+        // Hide progress bar after 3 seconds
+        setTimeout(() => {
+          uploadProgress.style.display = 'none';
+          progressBarFill.style.width = '0%';
+        }, 3000);
+      } catch (err) {
+        showUploadStatus('Ingestion succeeded, but response parsing failed.', 'error');
+        uploadProgress.style.display = 'none';
+      }
+    } else {
+      let errorMsg = 'Failed to index document.';
+      try {
+        const response = JSON.parse(xhr.responseText);
+        errorMsg = response.detail?.error || response.error || errorMsg;
+      } catch (err) {}
+      showUploadStatus(errorMsg, 'error');
+      uploadProgress.style.display = 'none';
+    }
+  };
+
+  xhr.onerror = () => {
+    uploadBtnLabel.style.pointerEvents = '';
+    fileInput.value = '';
+    showUploadStatus('Network error during upload.', 'error');
+    uploadProgress.style.display = 'none';
+  };
+
+  xhr.send(formData);
+}
+
+function showUploadStatus(message, type) {
+  const statusDiv = document.getElementById('uploadStatus');
+  statusDiv.textContent = message;
+  statusDiv.className = 'upload-status ' + type;
+}
+
+// ============================================================
 // On page load
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {

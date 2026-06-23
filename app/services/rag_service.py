@@ -41,6 +41,49 @@ class RAGService:
     # This keeps startup fast and avoids re-embedding on every server restart.
     # ==========================================================================
 
+    def ingest_file(self, file_path: str, original_filename: str) -> int:
+        """
+        Parses an uploaded PDF or DOCX file, chunks it, generates embeddings,
+        and adds them to the ChromaDB collection.
+        Returns the number of chunks added.
+        """
+        import uuid
+        # Step 1: Extract text pages
+        pages = []
+        if original_filename.lower().endswith(".pdf"):
+            from src.ingest import extract_from_pdf
+            pages = extract_from_pdf(file_path)
+        elif original_filename.lower().endswith(".docx"):
+            from src.ingest import extract_from_docx
+            pages = extract_from_docx(file_path)
+        else:
+            raise ValueError("Unsupported file type. Only PDF and DOCX files are allowed.")
+
+        if not pages:
+            raise ValueError("The uploaded document is empty or could not be read.")
+
+        # Override source metadata with original uploaded filename instead of temp filename
+        for page in pages:
+            page["metadata"]["source"] = original_filename
+
+        # Step 2: Chunk pages
+        from src.ingest import chunk_pages
+        from src.config import CHUNK_SIZE, CHUNK_OVERLAP
+        chunks = chunk_pages(pages, chunk_size=CHUNK_SIZE, overlap=CHUNK_OVERLAP)
+
+        # Step 3: Add to ChromaDB
+        ids = [f"{original_filename}_{uuid.uuid4()}_{i}" for i in range(len(chunks))]
+        documents = [chunk["text"] for chunk in chunks]
+        metadatas = [chunk["metadata"] for chunk in chunks]
+
+        self.vector_store.collection.add(
+            ids=ids,
+            documents=documents,
+            metadatas=metadatas
+        )
+
+        return len(chunks)
+
     def query(self, user_question: str, conversation_history: list[dict]) -> dict:
         """
         Full RAG query pipeline for the web UI.

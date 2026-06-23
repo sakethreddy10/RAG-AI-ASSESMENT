@@ -25,6 +25,7 @@ chromadb>=0.4.22
 # --- Document Parsing ---
 pypdf>=4.0.0              # Extract text from PDF files, page by page
 python-docx>=1.1.0        # Extract text from Microsoft Word (.docx) files
+python-multipart          # Required for FastAPI UploadFile support
 
 # --- Utilities ---
 python-dotenv>=1.0.1      # Load API keys from a .env file
